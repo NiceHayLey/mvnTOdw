@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.api.tokenSqlMap">
+	
+	<select id="selectArenaToken" parameterType="com.hankook.api.vo.ArenaTokenVO" resultType="string">
+		/* tokenSqlMap */
+		/* SELECT TOKEN */
+		SELECT TOKEN
+		FROM   API_USER_TOKEN_INFO
+		WHERE  1 = 1
+		AND    USER_ID = #{userId}
+	</select>
+	
+	<update id="createArenaToken" parameterType="com.hankook.api.vo.ArenaTokenVO">
+	/* tokenSqlMap */
+	/** createArenaToken */
+	MERGE INTO API_USER_TOKEN_INFO M
+	USING (
+	        SELECT #{userId}	AS userId
+	             , #{token}		AS token
+	             , #{userNm}	AS userNm
+	             , #{userEngNm}	AS userEngNm
+	        FROM DUAL
+	       ) D
+	    ON (M.USER_ID = D.userId)
+	WHEN MATCHED THEN
+		UPDATE
+		SET TOKEN		= D.token
+		  , USER_NM		= D.userNm
+		  , USER_ENG_NM	= D.userEngNm
+		  , REG_DT		= SYSDATE
+		WHERE 0 = 0
+		AND USER_ID = D.userId
+	WHEN NOT MATCHED THEN
+		INSERT (
+			  USER_ID
+			, TOKEN
+			, USER_NM
+			, USER_ENG_NM
+			, REG_DT
+		)VALUES(
+			  D.userId
+			, D.token
+			, D.userNm
+			, D.userEngNm
+			, SYSDATE
+		)
+	</update>
+	
+	<insert id="createArenaToken_BACK" parameterType="map">
+		/* tokenSqlMap */
+		/* Token 등록  */
+		INSERT INTO API_USER_TOKEN_INFO
+		( USER_ID
+		, TOKEN
+		, USER_NM
+		, USER_ENG_NM
+		, REG_DT
+		)VALUES(
+		 #{userId}
+		, #{token}
+		, #{userNm}
+		, #{userEngNm}
+		, SYSDATE
+		)
+	</insert>
+	
+	
+	
+	<!-- <select id="selectOpenIssue" parameterType="Map" resultType="HashMap"> -->
+	<select id="selectToken" parameterType="com.hankook.api.vo.ArenaTokenVO" resultType="string">
+		/* tokenSqlMap */
+		/* SELECT TOKEN */
+		SELECT TOKEN
+		FROM   API_TOKEN_INFO
+		WHERE  1 = 1
+		AND    TOKEN = #{arena_token}
+	</select>
+	
+	<insert id="createToken" parameterType="map">
+		<selectKey keyProperty="createTokenSeq" resultType="string" order="BEFORE">
+			/* tokenSqlMap */
+			/* Token Key 생성  */
+			SELECT 'AP' || SEQ_TOKEN_KEY.NEXTVAL FROM DUAL
+		</selectKey>
+		
+		/* Token 등록  */
+		INSERT INTO API_TOKEN_INFO
+		( TOKEN_SEQ, TOKEN, REG_DT)
+		VALUES 
+		(#{createTokenSeq}, #{token}, SYSDATE)
+	</insert>
+	
+	
+
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.web.webSqlMap">
+	
+	<select id="selectToken" parameterType="com.hankook.web.vo.TokenVO" resultType="string">
+		/* webSqlMap */
+		/* SELECT TOKEN */
+		SELECT TOKEN
+		FROM   API_USER_TOKEN_INFO
+		WHERE  1 = 1
+		AND    USER_ID = #{userId}
+	</select>
+	
+
+</mapper>
